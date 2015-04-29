@@ -1,0 +1,142 @@
+package com.miet.mp34.samoshchenko.lab4;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+/**
+Вычисления норм.
+ 1) В равно и в sqrt(???) захреначить только chk(выполнение последней проги)
+ 2) В начальный tc поставить null Или что-то другое? Типа первая команда же(или просто {..Enter} и в chk если enter, то в
+ result записать просто число.
+ !!!! 3) При перемене кучи - он спадает( если все 4 прогнать!(проверить).(Вроде + и - норм работают.
+ 4) Добавить кнопари, по которым будет вводиться текст
+ 5) Функцию sqrt добавить
+ 6) Расположить
+ 7) Отрефакторить
+
+ */
+
+
+
+/**
+ * Created by Julia on 27.03.2015.
+ */
+public class Calculator implements Calculate {
+    public double result=0;
+    public double temp=0;
+    public tempCom tc;
+    public enum tempCom {plus,minus,divide,multiple,sqrt}
+    public double plus(double p) {
+        result+=p;
+        return result;
+    }
+    public double minus(double p) {
+        result=result-p;
+        return result;
+    }
+    public double divide(double p) {
+        result=result/p;
+        return result;
+    }
+    public double multiple(double p) {
+        result=result*p;
+        return result;
+    }
+    public double sqroot(double p) {
+        result=Math.sqrt(result);
+        return result;
+    }
+    JButton pl=new JButton("+");
+    JButton mi=new JButton("-");
+    JButton dv=new JButton("/");
+    JButton mp=new JButton("*");
+    JTextField str=new JTextField();
+    JTextField str2=new JTextField();
+
+    Calculator() {
+        tc=tempCom.plus;
+        JFrame frame = new JFrame("Калькулятор");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        JPanel jp=new JPanel();
+        frame.add(jp);
+        jp.add(pl);
+        jp.add(mi);
+        jp.add(dv);
+        jp.add(mp);
+        jp.add(str);
+        jp.add(str2);
+        str.setColumns(5);
+        str2.setColumns(5);
+        //jp.setLayout(null);
+        frame.setSize(600,600);
+        //root.setBounds(200,100,100,50);
+        ActionListener actPlus = new PlusActList();
+        ActionListener actMinus = new MinusActList();
+        ActionListener actDivide = new DivideActList();
+        ActionListener actMultiple = new MultipleActList();
+        pl.addActionListener(actPlus);
+        mi.addActionListener(actMinus);
+        dv.addActionListener(actDivide);
+        mp.addActionListener(actMultiple);
+    }
+    public static void main(String[] args) {
+        Calculator cl=new Calculator();
+
+    }
+
+    public class PlusActList implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            chk(tc);
+            tc=tempCom.plus;
+            str.setText(0+"");
+        }
+    }
+    public class DivideActList implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            chk(tc);
+            tc=tempCom.divide;
+            str.setText(0+"");
+        }
+    }
+    public class MultipleActList implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            chk(tc);
+            tc=tempCom.multiple;
+            str.setText(0+"");
+        }
+    }
+    public class MinusActList implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            chk(tc);
+            tc=tempCom.minus;
+            str.setText(0+"");
+        }
+    }
+    public void chk(tempCom tc) {
+        double res=0;
+            if (tc.equals(tempCom.plus)) {
+                res = plus(Integer.parseInt(str.getText()));
+            }
+            if (tc.equals(tempCom.minus)) {
+                res=minus(Integer.parseInt(str.getText()));
+
+            }
+        if (tc.equals(tempCom.divide)) {
+            res=divide(Integer.parseInt(str.getText()));
+
+            }
+            if (tc.equals(tempCom.multiple)) {
+                if(result == 0) {result=1;}
+            res=multiple(Integer.parseInt(str.getText()));
+
+            }
+
+
+        //str.setText(res+"");
+        str2.setText(result+""); // for checking!
+    }
+}
