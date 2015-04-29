@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 public class Convertion {
     private static String _encodingSrc = "UTF8";
     private static String _encodingOne = "Cp866";
-
+    private static String _encodingTwo = "KOI8_R";
     public static void main(String[] args) {
         /*
         if (args.length != 2)
@@ -21,15 +21,11 @@ public class Convertion {
         */
         File srcfile = new File("srctext.txt");
         File outfile = new File("outtext.txt");
-        String contents = GetContents(srcfile);
-        System.out.print("File contents:\r\n" + contents);
-        System.out.println("--------------------------------------------");
+        File outfile2 = new File("outtext2.txt");
 
         Shifration(srcfile, outfile);
+        De_Shifration(outfile, outfile2);
 
-        String contents2 = GetContents(outfile);
-        System.out.print("File contents:\r\n" + contents);
-        System.out.println("--------------------------------------------");
     }
 
     static public String GetContents(File file) {
@@ -83,25 +79,22 @@ public class Convertion {
             inputStream = new FileInputStream(filein);
             outputStream = new FileOutputStream(fileout);
             InputStreamReader in = new InputStreamReader(inputStream, _encodingSrc);
+            OutputStreamWriter out = new OutputStreamWriter(outputStream, _encodingOne);
             BufferedReader reader = new BufferedReader(in);
-            PrintWriter out = new PrintWriter(outputStream);
+            BufferedWriter writer=new BufferedWriter(out);
+            //PrintWriter writer=new PrintWriter(outputStream);
+            int c;
             try {
-                while (reader.ready()) {
-                    StringTokenizer tokenizer = new StringTokenizer(reader.readLine());
-                    String str = tokenizer.nextToken();
-                    out.print(str+" ");
-                    while (tokenizer.hasMoreTokens())
-                    {
-                        str = tokenizer.nextToken();
-                        out.print(str+" ");
-
-                    }
+                while ((c = reader.read())!= -1)
+                {
+                    System.out.println(c);
+                    writer.write(c);
 
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            out.close();
+            writer.close();
 
         } catch (FileNotFoundException ex) {
             System.out.println("File does not exist: " + filein);
@@ -113,5 +106,44 @@ public class Convertion {
 
 
     }
+
+
+    static public void De_Shifration(File filein, File fileout) {
+        InputStream inputStream;
+        OutputStream outputStream;
+
+        try {
+            inputStream = new FileInputStream(filein);
+            outputStream = new FileOutputStream(fileout);
+            InputStreamReader in = new InputStreamReader(inputStream, _encodingOne);
+            OutputStreamWriter out = new OutputStreamWriter(outputStream, _encodingSrc);
+            BufferedReader reader = new BufferedReader(in);
+            BufferedWriter writer=new BufferedWriter(out);
+            //PrintWriter writer=new PrintWriter(outputStream);
+            int c;
+            try {
+                while ((c = reader.read())!= -1)
+                {
+                    System.out.println(c);
+                    writer.write(c);
+
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            writer.close();
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("File does not exist: " + filein);
+        } catch (IllegalArgumentException ex) {
+            System.out.println(ex.getMessage());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+
+    }
+
+
 }
 
