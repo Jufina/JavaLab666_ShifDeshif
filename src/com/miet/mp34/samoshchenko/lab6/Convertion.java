@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 public class Convertion {
     private static String _encodingSrc = "UTF8";
     private static String _encodingOne = "Cp866";
-    private static String _encodingTwo = "KOI8_R";
+    private static String _encodingTwo = "KOI8-R";
     public static void main(String[] args) {
         /*
         if (args.length != 2)
@@ -26,7 +26,6 @@ public class Convertion {
 
         Shifration(srcfile, outfile);
         De_Shifration(outfile, outfile2);
-        De_Shifration(outfile2, srcfile2);
 
     }
 
@@ -34,37 +33,39 @@ public class Convertion {
 
     static public void Shifration(File filein, File fileout) {
         InputStream inputStream;
-        OutputStream outputStream1;
-        OutputStream outputStream2;
+        OutputStream outputStream;
+
         boolean kod1=true;
         boolean kod2=false;
         try {
             inputStream = new FileInputStream(filein);
-            outputStream1 = new FileOutputStream(fileout);
-            outputStream2 = new FileOutputStream(fileout);
-            InputStreamReader in = new InputStreamReader(inputStream, _encodingSrc);
-            OutputStreamWriter out1 = new OutputStreamWriter(outputStream1, _encodingOne);
-            OutputStreamWriter out2 = new OutputStreamWriter(outputStream2, _encodingTwo);
+            outputStream = new FileOutputStream(fileout);
+
+            InputStreamReader in = new InputStreamReader(inputStream,_encodingSrc);
+            OutputStreamWriter out1 = new OutputStreamWriter(outputStream, _encodingOne);
+            OutputStreamWriter out2 = new OutputStreamWriter(outputStream, _encodingTwo);
             BufferedReader reader = new BufferedReader(in);
             BufferedWriter writer1=new BufferedWriter(out1);
             BufferedWriter writer2=new BufferedWriter(out2);
             //PrintWriter writer=new PrintWriter(outputStream);
-            int c;
-
+            int c=0;
+            reader.read();
             try {
-                while ((c = reader.read())!= -1)
+                while (c != -1)
                 {
+                    c = reader.read();
                     if(kod1)
                     {
+                        System.out.print(1);
                         writer1.write(c);
-                        writer2.write("");
+
                         kod1=false;
                         kod2=true;
                     }
                     else if(kod2)
                     {
                         writer2.write(c);
-                        writer1.write("");
+                        System.out.print(2);
                         kod2=false;
                         kod1=true;
                     }
@@ -79,7 +80,7 @@ public class Convertion {
             writer1.flush();
             writer2.flush();
             reader.close();
-
+            System.out.println();
 
 
         }
@@ -108,45 +109,46 @@ public class Convertion {
             InputStreamReader in1 = new InputStreamReader(inputStream1, _encodingOne);
             InputStreamReader in2 = new InputStreamReader(inputStream2, _encodingTwo);
 
-            OutputStreamWriter out = new OutputStreamWriter(outputStream, _encodingSrc);
+            OutputStreamWriter out = new OutputStreamWriter(outputStream,_encodingSrc);
             BufferedReader reader1 = new BufferedReader(in1);
             BufferedReader reader2 = new BufferedReader(in2);
 
             BufferedWriter writer=new BufferedWriter(out);
-            //PrintWriter writer=new PrintWriter(outputStream);
+
             int c=0;
             boolean kod1=true;
             boolean kod2=false;
-            int k;
-            //int k=reader1.read();
-            //k=reader2.read();
+
             try {
                 while (c != -1) {
-                    {
+
                         if(kod1)
                         {
-                           // System.out.println("kod1");
-                            reader2.read();
+
+                           reader2.read();
                             c=reader1.read();
+
                             kod1=false;
                             kod2=true;
-                            //System.out.println((char)c);
+
                             writer.write(c);
                         }
                         else {
                             if(kod2)
                             {
-                               // System.out.println("kod2");
-                                reader1.read();
+
+                              reader1.read();
                                 c=reader2.read();
+
                                 kod2=false;
                                 kod1=true;
-                                //System.out.println((char)c);
+
                                 writer.write(c);
                             }
                         }
 
-                    }
+
+
             }
 
             } catch (IOException e) {
