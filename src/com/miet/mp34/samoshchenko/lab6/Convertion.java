@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 public class Convertion {
     private static String _encodingSrc = "UTF8";
     private static String _encodingOne = "Cp866";
-    private static String _encodingTwo = "KOI8-R";
+    private static String _encodingTwo = "KOI8_R";
     public static void main(String[] args) {
         /*
         if (args.length != 2)
@@ -21,7 +21,6 @@ public class Convertion {
         */
         File srcfile = new File("srctext.txt");
         File outfile = new File("outtext.txt");
-        File srcfile2 = new File("srctext2.txt");
         File outfile2 = new File("outtext2.txt");
 
         Shifration(srcfile, outfile);
@@ -29,63 +28,76 @@ public class Convertion {
 
     }
 
+    static public String GetContents(File file) {
+        StringBuilder contents = new StringBuilder();
 
+        try {
+            if (file == null) {
+                throw new IllegalArgumentException("File should not be null.");
+            }
+
+            if (!file.exists()) {
+                throw new FileNotFoundException();
+            }
+
+            if (!file.canRead()) {
+                throw new IllegalArgumentException("File cannot be written: " + file);
+            }
+
+            if (!file.isFile()) {
+                throw new IllegalArgumentException("Should not be a directory: " + file);
+            }
+
+            FileInputStream src = new FileInputStream(file);
+            InputStreamReader in = new InputStreamReader(src, _encodingSrc);
+            BufferedReader input = new BufferedReader(in);
+            try {
+                String line = null;
+
+                while ((line = input.readLine()) != null) {
+                    contents.append(line + "\r\n");
+                }
+            } finally {
+                input.close();
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("File does not exist: " + file);
+        } catch (IllegalArgumentException ex) {
+            System.out.println(ex.getMessage());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return contents.toString();
+    }
 
     static public void Shifration(File filein, File fileout) {
         InputStream inputStream;
         OutputStream outputStream;
 
-        boolean kod1=true;
-        boolean kod2=false;
         try {
             inputStream = new FileInputStream(filein);
             outputStream = new FileOutputStream(fileout);
-
-            InputStreamReader in = new InputStreamReader(inputStream,_encodingSrc);
-            OutputStreamWriter out1 = new OutputStreamWriter(outputStream, _encodingOne);
-            OutputStreamWriter out2 = new OutputStreamWriter(outputStream, _encodingTwo);
+            InputStreamReader in = new InputStreamReader(inputStream, _encodingSrc);
+            OutputStreamWriter out = new OutputStreamWriter(outputStream, _encodingOne);
             BufferedReader reader = new BufferedReader(in);
-            BufferedWriter writer1=new BufferedWriter(out1);
-            BufferedWriter writer2=new BufferedWriter(out2);
+            BufferedWriter writer=new BufferedWriter(out);
             //PrintWriter writer=new PrintWriter(outputStream);
-            int c=0;
+            int c;
             reader.read();
             try {
-                while (c != -1)
+                while ((c = reader.read())!= -1)
                 {
-                    c = reader.read();
-                    if(kod1)
-                    {
-                        System.out.print(1);
-                        writer1.write(c);
+                    System.out.println(c);
+                    writer.write(c);
 
-                        kod1=false;
-                        kod2=true;
-                    }
-                    else if(kod2)
-                    {
-                        writer2.write(c);
-                        System.out.print(2);
-                        kod2=false;
-                        kod1=true;
-                    }
                 }
-
-            }
-
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            writer.close();
 
-            writer1.flush();
-            writer2.flush();
-            reader.close();
-            System.out.println();
-
-
-        }
-
-        catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {
             System.out.println("File does not exist: " + filein);
         } catch (IllegalArgumentException ex) {
             System.out.println(ex.getMessage());
@@ -98,70 +110,29 @@ public class Convertion {
 
 
     static public void De_Shifration(File filein, File fileout) {
-        InputStream inputStream1;
-        InputStream inputStream2;
+        InputStream inputStream;
         OutputStream outputStream;
 
         try {
-            inputStream1 = new FileInputStream(filein);
-            inputStream2 = new FileInputStream(filein);
+            inputStream = new FileInputStream(filein);
             outputStream = new FileOutputStream(fileout);
-            InputStreamReader in1 = new InputStreamReader(inputStream1, _encodingOne);
-            InputStreamReader in2 = new InputStreamReader(inputStream2, _encodingTwo);
-
-            OutputStreamWriter out = new OutputStreamWriter(outputStream,_encodingSrc);
-            BufferedReader reader1 = new BufferedReader(in1);
-            BufferedReader reader2 = new BufferedReader(in2);
-
+            InputStreamReader in = new InputStreamReader(inputStream, _encodingOne);
+            OutputStreamWriter out = new OutputStreamWriter(outputStream, _encodingSrc);
+            BufferedReader reader = new BufferedReader(in);
             BufferedWriter writer=new BufferedWriter(out);
-
-            int c=0;
-            boolean kod1=true;
-            boolean kod2=false;
-
+            //PrintWriter writer=new PrintWriter(outputStream);
+            int c;
             try {
-                while (c != -1) {
+                while ((c = reader.read())!= -1)
+                {
+                    System.out.println(c);
+                    writer.write(c);
 
-                        if(kod1)
-                        {
-
-                           reader2.read();
-                            c=reader1.read();
-
-                            kod1=false;
-                            kod2=true;
-
-                            writer.write(c);
-                        }
-                        else {
-                            if(kod2)
-                            {
-
-                              reader1.read();
-                                c=reader2.read();
-
-                                kod2=false;
-                                kod1=true;
-
-                                writer.write(c);
-                            }
-                        }
-
-
-
-            }
-
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
-
             writer.close();
-            reader1.close();
-            reader2.close();
-
-
-
 
         } catch (FileNotFoundException ex) {
             System.out.println("File does not exist: " + filein);
@@ -176,4 +147,3 @@ public class Convertion {
 
 
 }
-
